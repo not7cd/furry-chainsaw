@@ -1,0 +1,57 @@
+@import './layout.css';
+@import './colors.css';
+
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+}
+
+body {
+    margin: 0;
+    background: var(--bg-color);
+    font-family: 'Quicksand', sans-serif;
+}
+
+.navbar {
+    padding: 100px;
+}
+
+
+
+.navbar--right {
+    color: #fff;
+}
+
+.navbar__daterange {
+    padding: 10px;
+    border-radius: 3px;
+    border: 0;
+    border-bottom: 3px solid var(--main-color);
+}
+
+.navbar__sliderdate {
+    margin: 10px;
+    height: 10px;
+}
+
+.navbar__list {
+    padding: 20px;
+}
+
+.navbar__list * {
+    cursor: pointer;
+}
+
+.navbar__list__item {
+    padding: 10px;
+    margin: 10px;
+    background: var(--main-color);
+    border-radius: 3px;
+
+}
+
+.navbar__list__text {
+    padding: 10px;
+}

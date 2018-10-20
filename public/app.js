@@ -110,23 +110,22 @@ function createPin(launch) {
     let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100);
 
     let item = document.createElement('li');
+    item.className = 'navbar__list__item';
     item.id = launch.id;
-    
+
     console.log(launch);
-    item.innerHTML = "Mission: " + launch.name + "</br>" + (launch.missions[0] && launch.missions[0].description);
+    item.innerHTML = "Mission: <h1>" + launch.name + "</h1></br>" + (launch.missions[0] && launch.missions[0].description || '');
     list.appendChild(item);
 
-    item.addEventListener("click", function() {
+    item.addEventListener("click", function () {
         globe.goTo(new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude));
     })
 
-    
+
 
     let placemark = new WorldWind.Placemark(position, false, placemarkAttributes);
 
-    placemark.label = "Start here\n" +
-        "Lat " + placemark.position.latitude.toPrecision(4).toString() + "\n" +
-        "Lon " + placemark.position.longitude.toPrecision(5).toString();
+    placemark.label = "Start here\n"
     placemark.alwaysOnTop = true;
 
     placemarkLayer.addRenderable(placemark);
