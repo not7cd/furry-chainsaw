@@ -13,7 +13,7 @@ var padsAttributes = new WorldWind.PlacemarkAttributes(null);
 var padsLayer = new WorldWind.RenderableLayer("Pads");
 globe.addLayer(padsLayer);
 globe.addLayer(placemarkLayer);
-
+const list = document.getElementById('navbar-ul');
 
 placemarkAttributes.imageOffset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 0.3,
@@ -57,6 +57,7 @@ let json;
 let geoDatas = [];
 
 $(function () {
+
     fetchData('https://launchlibrary.net/1.4/pad?count=200', processPads);
 
     $("[name=sliderDate]").change(function () {
@@ -79,11 +80,13 @@ $(function () {
 
 
 
+
 })
 
 
 // fetch data from api
 function fetchData(json, callback) {
+    $(list).empty();
     fetch(json)
         .then(response => response.json())
         .then(callback)
@@ -97,11 +100,16 @@ function processPads(data) {
 
 function processLaunches(data) {
     globe.goTo(new WorldWind.Location(data.launches[0].location.pads[0].latitude, data.launches[0].location.pads[0].longitude));
+
     data.launches.map(launch => createPin(launch))
 }
 
 // create pin
 function createPin(launch) {
+    let item = document.createElement('li');
+    console.log(launch);
+    item.innerHTML = "Mission: " + launch.missions[0].name + "</br>" + launch.missions[0].description;
+    list.appendChild(item);
 
     let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100.0);
 
@@ -114,9 +122,7 @@ function createPin(launch) {
 
     placemarkLayer.addRenderable(placemark);
     console.log(placemark);
-    new WorldWind.ClickRecognizer(placemark.label, (data) => {
-        console.log(data);
-    })
+
 }
 
 //create pads
