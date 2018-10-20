@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    max-height: 100vh;
+}
+
+.navbar {
+    display: flex;
+    flex: 1;
+
+}
+
+.navbar__canva {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.navbar--right {
+    flex: 1;
+    flex-direction: column;
+
+}
+
+.navbar--left {
+    flex: 1;
+    height: 100%;
+}
+
+
+.navbar__list {
+    overflow-y: scroll;
+
+}
+
+.navbar__control {
+    display: flex;
+    flex-direction: row;
+}
+
+.navbar__daterange {
+    flex: 1;
+}
+
+.navbar__sliderDate {
+    flex: 1;
+}

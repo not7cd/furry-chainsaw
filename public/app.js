@@ -115,19 +115,20 @@ function createPin(launch) {
     let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100);
 
     let item = document.createElement('li');
+    item.className = 'navbar__list__item';
     item.id = launch.id;
     
-    
+ 
     item.innerHTML = "<h1>Mission: " + launch.name + "</h1><div class='description' style='display: none'>" +(launch.missions[0] && launch.missions[0].description || "")+ "</a>";
     list.appendChild(item);
 
     item.addEventListener("click", function() {
         $(item.childNodes[1]).toggle()
-        placemark.alwaysOnTop = true;
         globe.goTo(new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude));
     });
     
     let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
+
 
     placemark.label = launch.name + "\n" + statuses[launch.status].name + "\n" + launch.net;
 
