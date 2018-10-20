@@ -106,12 +106,19 @@ function processLaunches(data) {
 
 // create pin
 function createPin(launch) {
+
+    let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100.0);
+
     let item = document.createElement('li');
+    item.id = launch.id;
+    item.addEventListener("click", function() {
+        globe.goTo(position);
+    })
     console.log(launch);
     item.innerHTML = "Mission: " + launch.missions[0].name + "</br>" + launch.missions[0].description;
     list.appendChild(item);
 
-    let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100.0);
+    
 
     let placemark = new WorldWind.Placemark(position, false, placemarkAttributes);
 
