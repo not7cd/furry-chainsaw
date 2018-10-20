@@ -19,7 +19,7 @@ placemarkAttributes.imageOffset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 0.3,
     WorldWind.OFFSET_FRACTION, 0.0);
 
-placemarkAttributes.labelAttributes.color = WorldWind.Color.RED;
+//placemarkAttributes.labelAttributes.color = WorldWind.Color.RED;
 placemarkAttributes.labelAttributes.offset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 0.5,
     WorldWind.OFFSET_FRACTION, 1.0);
@@ -28,11 +28,13 @@ padsAttributes.imageOffset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 0.3,
     WorldWind.OFFSET_FRACTION, 0.0);
 
-padsAttributes.labelAttributes.color = WorldWind.Color.GREEN;
+padsAttributes.labelAttributes.color = WorldWind.Color.LIGHT_GRAY;
 padsAttributes.labelAttributes.offset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 0.5,
     WorldWind.OFFSET_FRACTION, 1.0);
 
+
+let statuses = [{}, {name: "GO", color: "WHITE"}, {name: "NO-GO", color: "RED"}, {name: "Success", color: "GREEN"}, {name: "Failure", color: "RED"}, {name: "HOLD", color: "MAGENTA"}, {name: "In Flight", color: "WHITE"}, {name: "Partial Failure", color: "RED"}];
 
 let layers = [
     // Imagery layers.
@@ -58,6 +60,7 @@ let geoDatas = [];
 
 $(function () {
 
+    fetchData('https://launchlibrary.net/1.4/launch/next/1', processLaunches);
     fetchData('https://launchlibrary.net/1.4/pad?count=200', processPads);
 
     $("[name=sliderDate]").change(function () {
@@ -89,7 +92,7 @@ function fetchData(json, callback) {
     $(list).empty();
     fetch(json)
         .then(response => response.json())
-        .then(callback)
+        .then(callback);
 }
 
 
@@ -101,36 +104,36 @@ function processPads(data) {
 function processLaunches(data) {
     globe.goTo(new WorldWind.Location(data.launches[0].location.pads[0].latitude, data.launches[0].location.pads[0].longitude));
 
-    data.launches.map(launch => createPin(launch))
+    data.launches.map(launch => createPin(launch));
 }
 
 // create pin
 function createPin(launch) {
+
+    console.log(launch);
 
     let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100);
 
     let item = document.createElement('li');
     item.className = 'navbar__list__item';
     item.id = launch.id;
-
-    console.log(launch);
-    item.innerHTML = "Mission: <h1>" + launch.name + "</h1></br>" + (launch.missions[0] && launch.missions[0].description || '');
+    
+ 
+    item.innerHTML = "<h1>Mission: " + launch.name + "</h1><div class='description' style='display: none'>" +(launch.missions[0] && launch.missions[0].description || "")+ "</a>";
     list.appendChild(item);
 
-    item.addEventListener("click", function () {
+    item.addEventListener("click", function() {
+        $(item.childNodes[1]).toggle()
         globe.goTo(new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude));
-    })
+    });
+    
+    let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
 
 
+    placemark.label = launch.name + "\n" + statuses[launch.status].name + "\n" + launch.net;
 
-    let placemark = new WorldWind.Placemark(position, false, placemarkAttributes);
-
-    placemark.label = "Start here\n"
-    placemark.alwaysOnTop = true;
 
     placemarkLayer.addRenderable(placemark);
-    console.log(placemark);
-
 }
 
 //create pads
@@ -142,8 +145,7 @@ function createPad(pad) {
 
     let placemark = new WorldWind.Placemark(position, false, padsAttributes);
 
-    placemark.label = "Pad\n" + pad.name;
-    placemark.alwaysOnTop = true;
+    placemark.label = pad.name;
 
     padsLayer.addRenderable(placemark);
 }
