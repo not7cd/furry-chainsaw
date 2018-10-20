@@ -43,3 +43,9 @@
 .navbar__sliderDate {
     flex: 1;
 }
+
+@media screen and (max-width: 600px) {
+    .container {
+        flex-wrap: wrap;
+    }
+}

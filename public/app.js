@@ -34,7 +34,28 @@ padsAttributes.labelAttributes.offset = new WorldWind.Offset(
     WorldWind.OFFSET_FRACTION, 1.0);
 
 
-let statuses = [{}, {name: "GO", color: "WHITE"}, {name: "NO-GO", color: "RED"}, {name: "Success", color: "GREEN"}, {name: "Failure", color: "RED"}, {name: "HOLD", color: "MAGENTA"}, {name: "In Flight", color: "WHITE"}, {name: "Partial Failure", color: "RED"}];
+let statuses = [{}, {
+    name: "GO",
+    color: "WHITE"
+}, {
+    name: "NO-GO",
+    color: "RED"
+}, {
+    name: "Success",
+    color: "GREEN"
+}, {
+    name: "Failure",
+    color: "RED"
+}, {
+    name: "HOLD",
+    color: "MAGENTA"
+}, {
+    name: "In Flight",
+    color: "WHITE"
+}, {
+    name: "Partial Failure",
+    color: "RED"
+}];
 
 let layers = [
     // Imagery layers.
@@ -117,16 +138,16 @@ function createPin(launch) {
     let item = document.createElement('li');
     item.className = 'navbar__list__item';
     item.id = launch.id;
-    
- 
-    item.innerHTML = "<h1>Mission: " + launch.name + "</h1><div class='description' style='display: none'>" +(launch.missions[0] && launch.missions[0].description || "")+ "</a>";
+
+
+    item.innerHTML = "<h1>Mission: " + launch.name + "</h1><div class='description' style='display: none'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
     list.appendChild(item);
 
-    item.addEventListener("click", function() {
+    item.addEventListener("click", function () {
         $(item.childNodes[1]).toggle()
         globe.goTo(new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude));
     });
-    
+
     let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
 
 
