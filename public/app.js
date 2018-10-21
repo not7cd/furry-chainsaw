@@ -81,8 +81,21 @@ let geoDatas = [];
 
 $(function () {
 
-    
-    
+
+    $('#scroll-right').click(function (event) {
+        console.log(event);
+        event.preventDefault();
+        $('#navbar-ul').animate({
+            scrollLeft: "+=600px"
+        }, "slow");
+    });
+    $('#scroll-left').click(function (event) {
+        console.log(event);
+        event.preventDefault();
+        $('#navbar-ul').animate({
+            scrollLeft: "-=600px"
+        }, "slow");
+    });
 
     $("[name=sliderDate]").change(function () {
         var newval = $(this).val();
@@ -145,29 +158,32 @@ function createLaunch(launch) {
     item.id = launch.id;
 
 
-    item.innerHTML = "<h1>" + launch.name + "</h1><a id='countdown_" + launch.id + "'></a><div class='description'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
+    item.innerHTML = "<h1 class='launch-name'>" + launch.name + "</h1><a id='countdown_" + launch.id + "'></a><div class='description'><h1>Description</h1>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
     if (launch.rocket.imageURL === 'https://s3.amazonaws.com/launchlibrary/RocketImages/placeholder_1920.png') {
         item.style.backgroundColor = '#111111';
     } else {
         item.style.backgroundImage = 'linear-gradient(rgba(0,0,0,30), rgba(0,0,0,0)),url(' + launch.rocket.imageURL + ')';
     }
-    
-    (launch.status == 1 || launch.status == 6) ? Countdown(launch.net, document.querySelector("#countdown_" + launch.id)) : $("#countdown_" + launch.id).html(statuses[launch.status].name);
+
+    (launch.status == 1 || launch.status == 6) ? Countdown(launch.net, document.querySelector("#countdown_" + launch.id)): $("#countdown_" + launch.id).html(statuses[launch.status].name);
 
 
     console.log(launch);
     list.appendChild(item);
 
-    (launch.status == 1 || launch.status == 6) ? Countdown(launch.net, document.querySelector("#countdown_" + launch.id)) : $("#countdown_" + launch.id).html(statuses[launch.status].name);
+    (launch.status == 1 || launch.status == 6) ? Countdown(launch.net, document.querySelector("#countdown_" + launch.id)): $("#countdown_" + launch.id).html(statuses[launch.status].name);
 
     item.addEventListener("click", function () {
+        $("html, body").animate({
+            scrollTop: 0
+        }, "slow");
         globe.goTo(new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude));
         // $('.more-info').html('<div class="data-table"><ul><li><h1>Name</h1><p>' + launch.name + '</p></li><li><h1>Description</h1><p>' + launch.description + '</p></li><li><h1>Name</h1><p>' + launch.name + '</p></li></ul></div>')
     });
 
     //BUG: all launches inherit the color of first launch
     placemarkAttributes.labelAttributes.color = WorldWind.Color[statuses[launch.status].color];
-  
+
     let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
 
 

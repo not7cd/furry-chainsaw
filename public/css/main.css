@@ -10,8 +10,13 @@
 body {
     margin: 0;
     font-family: 'Quicksand', sans-serif;
+    font-weight: 300;
     background: #111;
 
+}
+
+h1 {
+    font-weight: 300;
 }
 
 .container {
@@ -31,6 +36,7 @@ body {
     width: 100%;
     margin: auto;
     justify-content: center;
+
 }
 
 .controll {
@@ -62,11 +68,12 @@ body {
     overflow-x: scroll;
     overflow-y: hidden;
     flex-wrap: nowrap;
+
 }
 
 .navbar__list__item {
     background: #111;
-    padding: 20px;
+    padding: 50px;
     border-radius: 4px;
     color: #eee;
     cursor: pointer;
@@ -101,4 +108,14 @@ body {
     padding: 2px;
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.description {
+    text-align: justify;
+    padding: 10px;
+}
+
+.launch-name {
+    font-size: 2rem;
+    font-weight: 600;
 }
