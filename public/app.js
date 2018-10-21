@@ -159,6 +159,10 @@ function fetchData(json, callback) {
         .then(callback);
 }
 
+function fetchYearData(year, callback) {
+  fetchData(apiUrl + '/launch/' + year + '-01-01' + '/' + year + '-12-31?limit=200&status=1,5,6&sort=desc', callback);
+}
+
 function processPads(data) {
     //console.log(data.pads);
     data.pads.map(pad => createPad(pad));
@@ -288,3 +292,109 @@ function Countdown(date, element) {
     }
     return count(date);
 }
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////danger//////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+var margin = {top: 20, right: 20, bottom: 70, left: 40},
+    width = 700 - margin.left - margin.right,
+    height = 160 - margin.top - margin.bottom;
+
+// Parse the date / time
+var parseDate = d3.time.format("%Y-%m").parse;
+
+var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+var y = d3.scale.linear().range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .ticks(10);
+    // .style("display", "none")
+    // .tickFormat(d3.time.format("%Y-%m"));
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10);
+
+var svg = d3.select(".navbar__control").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("class", "navbar_svg")
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("https://morning-beach-99281.herokuapp.com/stats", function(error, data) {
+    data = Object.keys(data).map(function (key) { return {"value": data[key], "date": key} });
+    console.log(data)
+    // var years = Object.keys(data).map(function (key) { return key; });
+
+    // data.forEach(function(d) {
+    //     d.date = parseDate(d.date);
+    //     d.value = +d.value;
+    // });
+
+  
+  x.domain(data.map(function(d) { return d.date; }));
+  y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      // .attr("x", 100)
+      .style("fill", "none")
+      .call(xAxis)
+    .selectAll("text")
+      // .style("display", "inherit")
+      .style("fill", "#111")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-90)" );
+
+  // svg.append("g")
+  //     .attr("class", "y axis")
+  //     .call(yAxis)
+  //   .append("text")
+  //     .attr("transform", "rotate(-90)")
+  //     .attr("y", 6)
+  //     .attr("dy", ".71em")
+  //     .style("text-anchor", "end")
+  //     .text("Value ($)");
+
+  svg.selectAll("bar")
+      .data(data)
+    .enter().append("rect")
+      .style("fill", "#111")
+      .attr("x", function(d) { return x(d.date); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); })
+      .on("click", function(d) {
+        console.log("wybrano mnie", d.date);
+        $("#missions-header").html('All Missions from ' + d.date);
+        fetchData(apiUrl + '/launch/' + d.date + '-01-01' + '/' + d.date + '-12-31?limit=200', processLaunches);
+      })
+      .on('mouseover', function(d){
+    var nodeSelection = d3.select(this).style({opacity:'0.5'});
+    // nodeSelection.select("text").style({opacity:'1.0'});
+})  
+.on('mouseout', function(d){
+    var nodeSelection = d3.select(this).style({opacity:'1'});
+    // nodeSelection.select("text").style({opacity:'0.5'});
+})  
+
+});
