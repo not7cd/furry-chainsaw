@@ -121,7 +121,7 @@ $(function () {
     $("[name=sliderDate]").attr("value", (new Date()).getFullYear());
     $("[name=sliderDate]").change(function () {
         var newval = $(this).val();
-        $("#missions-header").html('All Missions from ' + newval);
+        $("#missions-header").html(' Missions from ' + newval);
         fetchData(apiUrl + 'launch/' + newval + '-01-01' + '/' + newval + '-12-31?limit=200', processLaunches);
 
         $([document.documentElement, document.body]).animate({
@@ -137,8 +137,8 @@ $(function () {
     $('input[name="daterange"]').daterangepicker({
         opens: 'left'
     }, function (start, end, label) {
-        $("#missions-header").html('All Missions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-        fetchData(apiUrl + '/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD'), processLaunches);
+        $("#missions-header").html(' Missions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        fetchData(apiUrl + '/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD') + '?limit=200', processLaunches);
 
         $([document.documentElement, document.body]).animate({
             scrollTop: $(".navbar__control").offset().top
@@ -146,7 +146,7 @@ $(function () {
     });
 
   
-    $("#missions-header").html('Upcoming Launches:');
+    $("#missions-header").html(' Upcoming Launches:');
     fetchData(apiUrl + '/launch/' + (new Date()).getFullYear() + '-01-01' + '/' + (new Date()).getFullYear() + '-12-31?limit=200&status=1,5,6&sort=desc', processLaunches);
     fetchData(apiUrl + '/pad?limit=200', processPads);
 });
@@ -169,6 +169,9 @@ function processPads(data) {
 }
 
 function processLaunches(data) {
+
+    document.querySelector("#missions-header").innerHTML = data.launches.length + document.querySelector("#missions-header").innerHTML
+
     placemarkLayer.removeAllRenderables();
 
     for (var d in window.countdowns) {
@@ -385,7 +388,7 @@ d3.json("https://morning-beach-99281.herokuapp.com/stats", function(error, data)
       .attr("height", function(d) { return height - y(d.value); })
       .on("click", function(d) {
         console.log("wybrano mnie", d.date);
-        $("#missions-header").html('All Missions from ' + d.date);
+        $("#missions-header").html(' Missions from ' + d.date);
         fetchData(apiUrl + '/launch/' + d.date + '-01-01' + '/' + d.date + '-12-31?limit=200', processLaunches);
       })
       .on('mouseover', function(d){

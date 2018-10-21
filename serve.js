@@ -4,4 +4,4 @@ const app = ex();
 app.use(ex.static('public'));
 
 app.listen(5040);
-console.log('Check port: 3040 dude🔥');
+console.log('Check port: 5040 dude🔥');
