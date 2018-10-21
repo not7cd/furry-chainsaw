@@ -81,16 +81,14 @@ let geoDatas = [];
 
 $(function () {
 
-    fetchData('https://launchlibrary.net/1.4/launch/next/1', processLaunches);
-    fetchData('https://launchlibrary.net/1.4/pad?count=200', processPads);
+    
+    
 
-    $("[name=sliderDate]").change(function () {
+    $("[name=sliderDate]").on('input', function () {
         placemarkLayer.removeAllRenderables();
         var newval = $(this).val();
-        json = 'https://launchlibrary.net/1.4/launch/' + newval + '-01-01' + '/' + newval + '-12-31';
-        console.log(json);
         $("#missions-header").html('All Missions from ' + newval);
-        fetchData(json, processLaunches);
+        fetchData('https://launchlibrary.net/1.4.1/launch/' + newval + '-01-01' + '/' + newval + '-12-31?limit=200', processLaunches);
     });
 
     $('input[name="daterange"]').daterangepicker({
@@ -98,13 +96,15 @@ $(function () {
     }, function (start, end, label) {
         placemarkLayer.removeAllRenderables();
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-        json = 'https://launchlibrary.net/1.4/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD');
+        json = 'https://launchlibrary.net/1.4.1/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD');
         console.log(json);
         $("#missions-header").html('All Missions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         fetchData(json, processLaunches);
     });
 
-
+    $("#missions-header").html('All Missions from ' + (new Date()).getFullYear());
+    fetchData('https://launchlibrary.net/1.4.1/launch/' + (new Date()).getFullYear() + '-01-01' + '/' + (new Date()).getFullYear() + '-12-31?limit=200&status=1,3,4,5,6,7', processLaunches);
+    fetchData('https://launchlibrary.net/1.4.1/pad?limit=200', processPads);
 
 })
 
@@ -124,15 +124,18 @@ function processPads(data) {
 }
 
 function processLaunches(data) {
+    for (var d in window.countdowns) {
+        window.clearInterval(window.countdowns[d]);
+    }
+
+
     globe.goTo(new WorldWind.Location(data.launches[0].location.pads[0].latitude, data.launches[0].location.pads[0].longitude));
 
-    data.launches.map(launch => createPin(launch));
+    data.launches.reverse().map(launch => createLaunch(launch));
 }
 
 // create pin
-function createPin(launch) {
-
-    console.log(launch.rocket.imageURL);
+function createLaunch(launch) {
 
     let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100);
 
@@ -142,13 +145,14 @@ function createPin(launch) {
     item.id = launch.id;
 
 
-    item.innerHTML = "<h1>" + launch.name + "</h1><div class='description' style='display: none'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
+    item.innerHTML = "<h1>" + launch.name + "</h1><a id='countdown_" + launch.id + "'></a><div class='description' style='display: none'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
     if (launch.rocket.imageURL === 'https://s3.amazonaws.com/launchlibrary/RocketImages/placeholder_1920.png') {
         item.style.backgroundColor = '#111111';
     } else {
         item.style.backgroundImage = 'linear-gradient(rgba(0,0,0,30), rgba(0,0,0,0)),url(' + launch.rocket.imageURL + ')';
-
     }
+    
+    (launch.status == 1 || launch.status == 6) ? Countdown(launch.net, document.querySelector("#countdown_" + launch.id)) : $("#countdown_" + launch.id).html(statuses[launch.status].name);
 
 
     console.log(launch);
@@ -159,6 +163,8 @@ function createPin(launch) {
         // $('.more-info').html('<div class="data-table"><ul><li><h1>Name</h1><p>' + launch.name + '</p></li><li><h1>Description</h1><p>' + launch.description + '</p></li><li><h1>Name</h1><p>' + launch.name + '</p></li></ul></div>')
     });
 
+    placemarkAttributes.labelAttributes.color = WorldWind.Color[statuses[launch.status].color];
+  
     let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
 
 
@@ -180,4 +186,57 @@ function createPad(pad) {
     placemark.label = pad.name;
 
     padsLayer.addRenderable(placemark);
+}
+
+
+function Countdown(date, element) {
+
+    let padnumber = function (f, b) {
+        var a = f + "";
+        while (a.length < b) {
+            a = "0" + a
+        }
+        return a
+    };
+    let count = function (u) {
+        var r;
+        var a = Date.parse(u);
+        var q = new Date();
+        var o = Math.floor((a - q) / 1000);
+        var s = "L- ";
+        if (o <= 0) {
+            s = "L+ ";
+            o = Math.floor((q - a) / 1000)
+        }
+        var t = Math.floor(o / 60);
+        var p = Math.floor(t / 60);
+        var b = Math.floor(p / 24);
+        var v = padnumber((o % 60), 2);
+        if (o < 60) {
+            r = s + v
+        }
+        v = padnumber((t % 60), 2) + ":" + v;
+        if (t < 60) {
+            r = s + v
+        }
+        v = padnumber((p % 24), 2) + ":" + v;
+        if (p < 24) {
+            r = s + v
+        }
+        if (b > 1) {
+            r = s + b + " days " + v
+        } else {
+            if (b == 1) {
+                r = s + b + " day " + v
+            }
+        }
+        return r
+    };
+    if (element) {
+        let countdown = setInterval(function () {
+            (document.getElementById(element) || element).innerHTML = count(date);
+        }, 1000);
+        (window.countdowns || []).push(countdown);
+    }
+    return count(date);
 }
