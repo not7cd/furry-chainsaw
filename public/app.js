@@ -1,7 +1,7 @@
 "use strict";
 
 //all stuff to create globe
-const apiUrl = "http://morning-beach-99281.herokuapp.com/"
+const apiUrl = "https://launchlibrary.net/1.4.1/"
 
 const globe = new WorldWind.WorldWindow("globe");
 
@@ -129,7 +129,7 @@ $(function () {
         }, "slow");
 
         $('input[name="daterange"]').datepicker({
-            date: new Date(newval + '-01-01');
+            date: new Date(newval + '-01-01')
         })
     });
     //$("[name=sliderDate]").trigger("change");
