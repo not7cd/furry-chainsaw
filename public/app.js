@@ -89,6 +89,7 @@ $(function () {
         var newval = $(this).val();
         json = 'https://launchlibrary.net/1.4/launch/' + newval + '-01-01' + '/' + newval + '-12-31';
         console.log(json);
+        $("#missions-header").html('All Missions from ' + newval);
         fetchData(json, processLaunches);
     });
 
@@ -99,6 +100,7 @@ $(function () {
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         json = 'https://launchlibrary.net/1.4/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD');
         console.log(json);
+        $("#missions-header").html('All Missions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         fetchData(json, processLaunches);
     });
 
@@ -140,7 +142,7 @@ function createPin(launch) {
     item.id = launch.id;
 
 
-    item.innerHTML = "<h1>Mission: " + launch.name + "</h1><div class='description' style='display: none'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
+    item.innerHTML = "<h1>" + launch.name + "</h1><div class='description' style='display: none'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
     list.appendChild(item);
 
     item.addEventListener("click", function () {
