@@ -84,8 +84,7 @@ $(function () {
     
     
 
-    $("[name=sliderDate]").on('input', function () {
-        placemarkLayer.removeAllRenderables();
+    $("[name=sliderDate]").change(function () {
         var newval = $(this).val();
         $("#missions-header").html('All Missions from ' + newval);
         fetchData('https://launchlibrary.net/1.4.1/launch/' + newval + '-01-01' + '/' + newval + '-12-31?limit=200', processLaunches);
@@ -94,7 +93,6 @@ $(function () {
     $('input[name="daterange"]').daterangepicker({
         opens: 'left'
     }, function (start, end, label) {
-        placemarkLayer.removeAllRenderables();
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         json = 'https://launchlibrary.net/1.4.1/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD');
         console.log(json);
@@ -105,7 +103,6 @@ $(function () {
     $("#missions-header").html('All Missions from ' + (new Date()).getFullYear());
     fetchData('https://launchlibrary.net/1.4.1/launch/' + (new Date()).getFullYear() + '-01-01' + '/' + (new Date()).getFullYear() + '-12-31?limit=200&status=1,3,4,5,6,7', processLaunches);
     fetchData('https://launchlibrary.net/1.4.1/pad?limit=200', processPads);
-
 
 })
 
@@ -125,6 +122,8 @@ function processPads(data) {
 }
 
 function processLaunches(data) {
+    placemarkLayer.removeAllRenderables();
+
     for (var d in window.countdowns) {
         window.clearInterval(window.countdowns[d]);
     }
@@ -138,27 +137,36 @@ function processLaunches(data) {
 // create pin
 function createLaunch(launch) {
 
-    //console.log(launch);
-
     let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100);
 
     let item = document.createElement('li');
     item.className = 'navbar__list__item';
+
     item.id = launch.id;
 
 
-    item.innerHTML = "<h1>" + launch.name + ": <a id='countdown_" + launch.id + "'></a></h1>";
+    item.innerHTML = "<h1>" + launch.name + "</h1><a id='countdown_" + launch.id + "'></a><div class='description'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
+    if (launch.rocket.imageURL === 'https://s3.amazonaws.com/launchlibrary/RocketImages/placeholder_1920.png') {
+        item.style.backgroundColor = '#111111';
+    } else {
+        item.style.backgroundImage = 'linear-gradient(rgba(0,0,0,30), rgba(0,0,0,0)),url(' + launch.rocket.imageURL + ')';
+    }
+    
+    (launch.status == 1 || launch.status == 6) ? Countdown(launch.net, document.querySelector("#countdown_" + launch.id)) : $("#countdown_" + launch.id).html(statuses[launch.status].name);
+
+
+    console.log(launch);
     list.appendChild(item);
 
     (launch.status == 1 || launch.status == 6) ? Countdown(launch.net, document.querySelector("#countdown_" + launch.id)) : $("#countdown_" + launch.id).html(statuses[launch.status].name);
 
     item.addEventListener("click", function () {
-        $(item.childNodes[1]).toggle()
         globe.goTo(new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude));
+        // $('.more-info').html('<div class="data-table"><ul><li><h1>Name</h1><p>' + launch.name + '</p></li><li><h1>Description</h1><p>' + launch.description + '</p></li><li><h1>Name</h1><p>' + launch.name + '</p></li></ul></div>')
     });
 
     placemarkAttributes.labelAttributes.color = WorldWind.Color[statuses[launch.status].color];
-
+  
     let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
 
 
