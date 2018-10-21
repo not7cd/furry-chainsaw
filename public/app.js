@@ -1,6 +1,8 @@
 "use strict";
 
 //all stuff to create globe
+const apiUrl = "http://morning-beach-99281.herokuapp.com/"
+
 const globe = new WorldWind.WorldWindow("globe");
 
 globe.addLayer(new WorldWind.BMNGOneImageLayer());
@@ -120,7 +122,7 @@ $(function () {
     $("[name=sliderDate]").change(function () {
         var newval = $(this).val();
         $("#missions-header").html('All Missions from ' + newval);
-        fetchData('https://launchlibrary.net/1.4.1/launch/' + newval + '-01-01' + '/' + newval + '-12-31?limit=200', processLaunches);
+        fetchData(apiUrl + 'launch/' + newval + '-01-01' + '/' + newval + '-12-31?limit=200', processLaunches);
 
         $([document.documentElement, document.body]).animate({
             scrollTop: $(".navbar__control").offset().top
@@ -136,17 +138,17 @@ $(function () {
         opens: 'left'
     }, function (start, end, label) {
         $("#missions-header").html('All Missions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-        fetchData('https://launchlibrary.net/1.4.1/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD'), processLaunches);
+        fetchData(apiUrl + '/launch/' + start.format('YYYY-MM-DD') + '/' + end.format('YYYY-MM-DD'), processLaunches);
 
         $([document.documentElement, document.body]).animate({
             scrollTop: $(".navbar__control").offset().top
         }, "slow");
     });
 
+  
     $("#missions-header").html('Upcoming Launches:');
-    fetchData('https://launchlibrary.net/1.4.1/launch/' + (new Date()).getFullYear() + '-01-01' + '/' + (new Date()).getFullYear() + '-12-31?limit=200&status=1,5,6&sort=desc', processLaunches);
-    fetchData('https://launchlibrary.net/1.4.1/pad?limit=200', processPads);
-
+    fetchData(apiUrl + '/launch/' + (new Date()).getFullYear() + '-01-01' + '/' + (new Date()).getFullYear() + '-12-31?limit=200&status=1,5,6&sort=desc', processLaunches);
+    fetchData(apiUrl + '/pad?limit=200', processPads);
 });
 
 // fetch data from api
