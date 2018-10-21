@@ -104,14 +104,14 @@ $(function () {
         console.log(event);
         event.preventDefault();
         $('#navbar-ul').animate({
-            scrollLeft: "+=600px"
+            scrollLeft: "+=" + (parseInt($(".navbar__list__item").width()) + 100) + "px"
         }, "slow");
     });
     $('#scroll-left').click(function (event) {
         console.log(event);
         event.preventDefault();
         $('#navbar-ul').animate({
-            scrollLeft: "-=600px"
+            scrollLeft: "-=" + (parseInt($(".navbar__list__item").width()) + 100) + "px"
         }, "slow");
     });
 
@@ -125,8 +125,12 @@ $(function () {
         $([document.documentElement, document.body]).animate({
             scrollTop: $(".navbar__control").offset().top
         }, "slow");
+
+        $('input[name="daterange"]').datepicker({
+            date: new Date(newval + '-01-01');
+        })
     });
-    $("[name=sliderDate]").trigger("change");
+    //$("[name=sliderDate]").trigger("change");
 
     $('input[name="daterange"]').daterangepicker({
         opens: 'left'
@@ -139,8 +143,8 @@ $(function () {
         }, "slow");
     });
 
-    $("#missions-header").html('All Missions from ' + (new Date()).getFullYear());
-    //fetchData('https://launchlibrary.net/1.4.1/launch/' + (new Date()).getFullYear() + '-01-01' + '/' + (new Date()).getFullYear() + '-12-31?limit=200&status=1,3,4,5,6,7', processLaunches);
+    $("#missions-header").html('Upcoming Launches:');
+    fetchData('https://launchlibrary.net/1.4.1/launch/' + (new Date()).getFullYear() + '-01-01' + '/' + (new Date()).getFullYear() + '-12-31?limit=200&status=1,5,6&sort=desc', processLaunches);
     fetchData('https://launchlibrary.net/1.4.1/pad?limit=200', processPads);
 
 });
@@ -196,7 +200,7 @@ function createLaunch(launch) {
     if (launch.rocket.imageURL === 'https://s3.amazonaws.com/launchlibrary/RocketImages/placeholder_1920.png') {
         item.style.backgroundColor = '#111111';
     } else {
-        item.style.backgroundImage = 'linear-gradient(rgba(0,0,0,30), rgba(0,0,0,0)),url(' + launch.rocket.imageURL + ')';
+        item.style.backgroundImage = 'linear-gradient(rgba(0,0,0,80), rgba(0,0,0,0)),url(' + launch.rocket.imageURL + ')';
     }
 
     list.appendChild(item);
