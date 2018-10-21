@@ -106,7 +106,6 @@ $(function () {
 
 
 
-
 })
 
 
@@ -133,21 +132,31 @@ function processLaunches(data) {
 // create pin
 function createPin(launch) {
 
-    console.log(launch);
+    console.log(launch.rocket.imageURL);
 
     let position = new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude, 100);
 
     let item = document.createElement('li');
     item.className = 'navbar__list__item';
+
     item.id = launch.id;
 
 
     item.innerHTML = "<h1>" + launch.name + "</h1><div class='description' style='display: none'>" + (launch.missions[0] && launch.missions[0].description || "") + "</a>";
+    if (launch.rocket.imageURL === 'https://s3.amazonaws.com/launchlibrary/RocketImages/placeholder_1920.png') {
+        item.style.backgroundColor = '#111111';
+    } else {
+        item.style.backgroundImage = 'linear-gradient(rgba(0,0,0,30), rgba(0,0,0,0)),url(' + launch.rocket.imageURL + ')';
+
+    }
+
+
+    console.log(launch);
     list.appendChild(item);
 
     item.addEventListener("click", function () {
-        $(item.childNodes[1]).toggle()
         globe.goTo(new WorldWind.Position(launch.location.pads[0].latitude, launch.location.pads[0].longitude));
+        // $('.more-info').html('<div class="data-table"><ul><li><h1>Name</h1><p>' + launch.name + '</p></li><li><h1>Description</h1><p>' + launch.description + '</p></li><li><h1>Name</h1><p>' + launch.name + '</p></li></ul></div>')
     });
 
     let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
