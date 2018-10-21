@@ -165,6 +165,7 @@ function createLaunch(launch) {
         // $('.more-info').html('<div class="data-table"><ul><li><h1>Name</h1><p>' + launch.name + '</p></li><li><h1>Description</h1><p>' + launch.description + '</p></li><li><h1>Name</h1><p>' + launch.name + '</p></li></ul></div>')
     });
 
+    //BUG: all launches inherit the color of first launch
     placemarkAttributes.labelAttributes.color = WorldWind.Color[statuses[launch.status].color];
   
     let placemark = new WorldWind.Placemark(position, undefined, placemarkAttributes);
