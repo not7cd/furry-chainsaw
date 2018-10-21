@@ -49,23 +49,23 @@ padsAttributes.labelAttributes.offset = new WorldWind.Offset(
 
 let statuses = [{},
     {
-        name: "GO",
+        name: "GG for Launch!",
         color: "WHITE"
     },
     {
-        name: "NO-GO",
+        name: "NO-GO for Launch",
         color: "RED"
     },
     {
-        name: "Success",
+        name: "Launch Success",
         color: "GREEN"
     },
     {
-        name: "Failure",
+        name: "Launch Failure",
         color: "RED"
     },
     {
-        name: "HOLD",
+        name: "Countdown HOLD",
         color: "MAGENTA"
     },
     {
